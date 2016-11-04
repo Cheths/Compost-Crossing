@@ -1,23 +1,63 @@
 package com.cs442.group10.compost_crossing;
 
-import android.os.Build;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import com.cs442.group10.compost_crossing.newsArticle.Article;
+import com.cs442.group10.compost_crossing.newsArticle.News;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements ViewListingFragment.OnListingSelectedListener {
-    /** Called when the activity is first created. */
+
+    Button readArticle;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        readArticle = (Button) findViewById(R.id.readArticleButton);
+        readArticle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickingReadArticleButton();
+            }
+        });
+
+        final Button Composter= (Button)findViewById(R.id.compostButton);
+        final Button residentButton= (Button)findViewById(R.id.residentButton);
+
+        Composter.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+//                Intent i = new Intent(getBaseContext(), ViewListFragment.class);
+//                startActivity(i);
+
+            }
+        });
+
+        residentButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                /*
+                This method should go to resident login screen. Currently it goes to ad creation
+                page for testing purposes.
+                */
+                onClickingResident();
+//                Intent i = new Intent(getBaseContext(), "give the required class name");
+//                startActivity(i);
+
+            }
+        });
 
         final Button button = (Button) findViewById(R.id.compostButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -28,6 +68,13 @@ public class MainActivity extends AppCompatActivity implements ViewListingFragme
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_list_item_1, android.R.id.text1, Listings.Names);
                 lv.setAdapter(adapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {//temporary work around to navigate to detail view
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent compostDetailIntent = new Intent(getApplicationContext(),CompostDetailActivity.class);
+                        startActivity(compostDetailIntent);
+                    }
+                });
                 /*
                 //Fragment fragment = new RepeatEntry();
                 //FragmentManager fm = getFragmentManager();
@@ -66,5 +113,17 @@ public class MainActivity extends AppCompatActivity implements ViewListingFragme
 
     public void onListingSelected(int position) {
         /*Code for fragment transaction when clicking on item*/
+        Intent compostDetailIntent = new Intent(this,CompostDetailActivity.class);
+        startActivity(compostDetailIntent);
+    }
+
+    public void onClickingReadArticleButton(){
+        Intent readArticleIntent = new Intent(this, Article.class);
+        startActivity(readArticleIntent);
+    }
+
+    public void onClickingResident(){
+        Intent adCreationIntent = new Intent(this, AdCreation.class);
+        startActivity(adCreationIntent);
     }
 }
